@@ -57,7 +57,7 @@ HeightMap::HeightMap(ros::NodeHandle node, ros::NodeHandle priv_nh)
 
   // subscribe to Velodyne data points
   // TODO: find and change the topic name of the point cloud data
-  velodyne_scan_ = node.subscribe("/points", 10,
+  velodyne_scan_ = node.subscribe("/camera/depth/points", 10,
                                   &HeightMap::processData, this,
                                   ros::TransportHints().tcpNoDelay(true));
 }
@@ -79,9 +79,9 @@ void HeightMap::constructFullClouds(const VPointCloud::ConstPtr &scan,
     // TODO: convert position of points from camera to local coordinate
     // - camera coordinate (x,y,z): scan->points[i].x, scan->points[i].y, scan->points[i].z
     // - local coordinate (x,y,z): local_x, local_y, local_z
-    double local_x = scan->points[i].x; // currently, wrong transform. you need to fix this!
-    double local_y = scan->points[i].y; // currently, wrong transform. you need to fix this!
-    double local_z = scan->points[i].z; // currently, wrong transform. you need to fix this!
+    double local_x = scan->points[i].z;
+    double local_y = -scan->points[i].x; 
+    double local_z =  -scan->points[i].y;
 
     int x = ((grid_dim_/2)+(local_x)/m_per_cell_); // ((grid_dim_/2)+scan->points[i].x/m_per_cell_);
     int y = ((grid_dim_/2)+(local_y)/m_per_cell_); // ((grid_dim_/2)+scan->points[i].y/m_per_cell_);
@@ -102,9 +102,9 @@ void HeightMap::constructFullClouds(const VPointCloud::ConstPtr &scan,
     // TODO: convert position of points from camera to local coordinate
     // - camera coordinate (x,y,z): scan->points[i].x, scan->points[i].y, scan->points[i].z
     // - local coordinate (x,y,z): local_x, local_y, local_z
-    double local_x = scan->points[i].x; // currently, wrong transform. you need to fix this!
-    double local_y = scan->points[i].y; // currently, wrong transform. you need to fix this!
-    double local_z = scan->points[i].z; // currently, wrong transform. you need to fix this!
+    double local_x = scan->points[i].z;
+    double local_y = -scan->points[i].x; 
+    double local_z =  -scan->points[i].y;
 
     int x = ((grid_dim_/2)+(local_x)/m_per_cell_); // ((grid_dim_/2)+scan->points[i].x/m_per_cell_)
     int y = ((grid_dim_/2)+(local_y)/m_per_cell_); // ((grid_dim_/2)+scan->points[i].y/m_per_cell_)
@@ -149,9 +149,9 @@ void HeightMap::constructGridClouds(const VPointCloud::ConstPtr &scan,
     // TODO: convert position of points from camera to local coordinate
     // - camera coordinate (x,y,z): scan->points[i].x, scan->points[i].y, scan->points[i].z
     // - local coordinate (x,y,z): local_x, local_y, local_z
-    double local_x = scan->points[i].x; // currently, wrong transform. you need to fix this!
-    double local_y = scan->points[i].y; // currently, wrong transform. you need to fix this!
-    double local_z = scan->points[i].z; // currently, wrong transform. you need to fix this!
+    double local_x = scan->points[i].z;
+    double local_y = -scan->points[i].x; 
+    double local_z =  -scan->points[i].y;
 
     int x = ((grid_dim_/2)+(local_x)/m_per_cell_);
     int y = ((grid_dim_/2)+(local_y)/m_per_cell_);
@@ -174,8 +174,9 @@ void HeightMap::constructGridClouds(const VPointCloud::ConstPtr &scan,
     // TODO: convert position of points from camera to local coordinate
     // - camera coordinate (x,y,z): scan->points[i].x, scan->points[i].y, scan->points[i].z
     // - local coordinate (x,y,z): local_x, local_y, local_z
-    double local_x = scan->points[i].x; // currently, wrong transform. you need to fix this!
-    double local_y = scan->points[i].y; // currently, wrong transform. you need to fix this!
+    double local_x = scan->points[i].z;
+    double local_y = -scan->points[i].x; 
+    double local_z =  -scan->points[i].y;
     
     int x = ((grid_dim_/2)+(local_x)/m_per_cell_);
     int y = ((grid_dim_/2)+(local_y)/m_per_cell_);

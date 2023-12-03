@@ -33,7 +33,7 @@ public:
     float MAP_MIN_Y = -10; // map min y position
     float MAP_MAX_Y =  10; // map max y position
 
-    float INFLATION_RADIUS = 0.2; // [m] size of inflation
+    float INFLATION_RADIUS = 0.4; // [m] size of inflation
     float INFLATION_RES    = RESOLUTION_; // [m] resolution of inflation
     int INFLATION_BINS     = INFLATION_RADIUS / INFLATION_RES;
 
@@ -117,26 +117,29 @@ void HeightmapToCostMap::generate_costmap()
                     {
                         double current_x = it->x;
                         double current_y = it->y;
-
-                        for (int i=0; i < INFLATION_BINS; i++)
+                        double padding_radius = 100;
+for (int i = -INFLATION_BINS; i <= INFLATION_BINS; i++)
                         {
-                            for (int j=0; j < INFLATION_BINS; j++)
+                            for (int j = -INFLATION_BINS; j <= INFLATION_BINS; j++)
                             {
-                                double dx = i * INFLATION_RES - 0.5*INFLATION_RADIUS;
-                                double dy = j * INFLATION_RES - 0.5*INFLATION_RADIUS;
-                                double dist = sqrt(pow(dx, 2.0) + pow(dy, 2.0));
-                                double map_value = 100 - std::min(50.0, 20 * dist);
+                                double dx = i * INFLATION_RES;
+                                double dy = j * INFLATION_RES;
+                                double dist = sqrt(dx * dx + dy * dy);
 
-                                double padded_x = current_x + dx;
-                                double padded_y = current_y + dy;
-
-                                double padded_map_x = int((padded_x - MAP_MIN_X) / RESOLUTION_);
-                                double padded_map_y = int((padded_y - MAP_MIN_Y) / RESOLUTION_);
-                                if (padded_map_x < width_ && padded_map_x >= 0 && padded_map_y < height_ && padded_map_y >= 0)
+                                if (dist <= padding_radius)
                                 {
-                                    // update to larger map value
-                                    double current_map_value = oMap.data[MAP_IDX(width_, padded_map_x, padded_map_y)];
-                                    oMap.data[MAP_IDX(width_, padded_map_x, padded_map_y)] = std::max(map_value, current_map_value);
+                                    double map_value = 100; // Set your desired value for the padded area
+                                    double padded_x = it->x + dx;
+                                    double padded_y = it->y + dy;
+
+                                    int padded_map_x = int((padded_x - MAP_MIN_X) / RESOLUTION_);
+                                    int padded_map_y = int((padded_y - MAP_MIN_Y) / RESOLUTION_);
+                                    if (padded_map_x >= 0 && padded_map_x < width_ && padded_map_y >= 0 && padded_map_y < height_)
+                                    {
+                                        // Update to larger map value
+                                        double current_map_value = oMap.data[MAP_IDX(width_, padded_map_x, padded_map_y)];
+                                        oMap.data[MAP_IDX(width_, padded_map_x, padded_map_y)] = std::max(map_value, current_map_value);
+                                    }
                                 }
                             }
                         }
